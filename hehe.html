@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Monthsary Letter</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="https://hammerjs.github.io/dist/hammer.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-image: url('https://images.unsplash.com/photo-1586787353897-c7b9d9b9f4c9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
+      background-size: cover;
+      background-attachment: fixed;
+      background-position: center;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Dancing Script', cursive;
+      cursor: url('https://img.icons8.com/emoji/16/000000/heart-suit.png'), auto;
+    }
+    .letter-container {
+      transition: all 0.8s ease-in-out;
+      transform-origin: center;
+      max-width: 90%;
+      width: 700px;
+      background: linear-gradient(135deg, rgba(255, 245, 247, 0.95), rgba(255, 255, 255, 0.95));
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      border: 4px solid #f9a8d4;
+      position: relative;
+      padding: 2rem;
+    }
+    .closed {
+      transform: scale(0.85) rotate(3deg);
+      opacity: 0.9;
+      cursor: pointer;
+    }
+    .open {
+      transform: scale(1) rotate(0deg);
+      opacity: 1;
+    }
+    .heart {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      transform: rotate(-45deg);
+      animation: float 5s ease-in-out infinite;
+      z-index: 10;
+      cursor: pointer;
+    }
+    .heart::before,
+    .heart::after {
+      content: '';
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      position: absolute;
+    }
+    .heart::before {
+      top: -9px;
+      left: 0;
+    }
+    .heart::after {
+      left: 9px;
+      top: 0;
+    }
+    @keyframes float {
+      0% { transform: translateY(0) rotate(-45deg) scale(1); opacity: 0.9; }
+      50% { transform: translateY(-120px) rotate(-45deg) scale(1.15); opacity: 0.4; }
+      100% { transform: translateY(0) rotate(-45deg) scale(1); opacity: 0.9; }
+    }
+    @keyframes pop {
+      0% { transform: scale(1) rotate(-45deg); opacity: 0.9; }
+      50% { transform: scale(2) rotate(-45deg); opacity: 0.5; }
+      100% { transform: scale(0) rotate(-45deg); opacity: 0; }
+    }
+    .tulip {
+      animation: sway 2.5s ease-in-out infinite;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    }
+    @keyframes sway {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(8deg) scale(1.05); }
+      100% { transform: rotate(0deg) scale(1); }
+    }
+    .envelope {
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+    .sparkle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #ffd1dc;
+      border-radius: 50%;
+      animation: sparkle 2s ease-in-out infinite;
+      z-index: 10;
+    }
+    @keyframes sparkle {
+      0% { transform: scale(0) rotate(0deg); opacity: 1; }
+      50% { transform: scale(1.5) rotate(180deg); opacity: 0.7; }
+      100% { transform: scale(0) rotate(360deg); opacity: 0; }
+    }
+    .letter-content {
+      transition: opacity 0.8s ease-in-out, max-height 0.8s ease-in-out;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+    .letter-content.open {
+      max-height: 3000px;
+      opacity: 1;
+    }
+    .fade-in-text {
+      opacity: 0;
+      animation: fadeIn 1.2s ease-in forwards;
+    }
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(15px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .slideshow-container {
+      display: none;
+      max-width: 900px;
+      margin: 2rem auto;
+      position: relative;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    .slideshow-container.active {
+      display: block;
+      animation: fadeIn 0.8s ease-in;
+    }
+    .slide {
+      display: none;
+      width: 100%;
+      height: 450px;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .slide.active {
+      display: block;
+      animation: slideFade 0.8s ease-in-out;
+    }
+    @keyframes slideFade {
+      0% { opacity: 0; transform: scale(0.98); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    .sign-button {
+      animation: bounce 1.8s ease-in-out infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .caption {
+      color: white;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      margin-top: 12px;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+    .signature {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2rem;
+      animation: write 2s steps(20) forwards;
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: 2px solid #ff6b6b;
+    }
+    @keyframes write {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+    h1 {
+      font-size: 4vw;
+    }
+    .text-base {
+      font-size: 1rem;
+    }
+    @media (max-width: 640px) {
+      .letter-container {
+        width: 95%;
+        padding: 1.5rem;
+      }
+      .slide {
+        height: 300px;
+      }
+      .tulip {
+        width: 80px;
+      }
+      h1 {
+        font-size: 8vw;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="letter-container closed" id="letter" role="button" aria-label="Click to open the monthsary letter">
+    <!-- Floating Hearts -->
+    <div class="heart" style="top: 5%; left: 5%; animation-delay: 0s;"></div>
+    <div class="heart" style="top: 15%; right: 10%; animation-delay: 1s;"></div>
+    <div class="heart" style="bottom: 10%; left: 10%; animation-delay: 2s;"></div>
+    <div class="heart" style="bottom: 20%; right: 15%; animation-delay: 3s;"></div>
+    <div class="heart" style="top: 25%; left: 20%; animation-delay: 0.5s;"></div>
+    <div class="heart" style="bottom: 15%; right: 25%; animation-delay: 1.5s;"></div>
+
+    <!-- Sparkle Effects -->
+    <div class="sparkle" style="top: 10%; left: 20%; animation-delay: 0.5s;"></div>
+    <div class="sparkle" style="top: 30%; right: 15%; animation-delay: 1.5s;"></div>
+    <div class="sparkle" style="bottom: 25%; left: 25%; animation-delay: 2.5s;"></div>
+    <div class="sparkle" style="top: 20%; right: 20%; animation-delay: 1s;"></div>
+    <div class="sparkle" style="bottom: 30%; left: 15%; animation-delay: 2s;"></div>
+
+    <!-- Envelope (Closed State) -->
+    <div class="envelope text-center" id="envelope">
+      <img src="https://img.icons8.com/color/100/000000/love-letter.png" alt="Envelope" class="mx-auto mb-4 w-32 h-48" loading="lazy">
+      <p class="text-pink-600 text-lg font-semibold">Click to open our special monthsary letter! 💕</p>
+    </div>
+
+    <!-- Letter Content (Initially Hidden) -->
+    <div class="letter-content closed" id="letter-content">
+      <!-- Header -->
+      <h1 class="text-4xl md:text-5xl font-bold text-pink-600 text-center mb-6 animate-bounce fade-in-text" id="envelope-title" style="opacity: 0;">Happy Monthsary, My Love!</h1>
+
+      <!-- Tulip Images -->
+      <div class="flex justify-between mb-6">
+        <img src="https://onlineflowerexpress.com/cdn/shop/files/PinkTulipsLove.webp?v=1691571050" alt="Pink Tulip" class="w-24 md:w-28 tulip" style="animation-delay: 0s;" loading="lazy">
+        <img src="https://onlineflowerexpress.com/cdn/shop/files/PinkTulipsLove.webp?v=1691571050" alt="Pink Tulip" class="w-24 md:w-28 tulip" style="animation-delay: 1s;" loading="lazy">
+        <img src="https://onlineflowerexpress.com/cdn/shop/files/PinkTulipsLove.webp?v=1691571050" alt="Pink Tulip" class="w-24 md:w-28 tulip" style="animation-delay: 2s;" loading="lazy">
+      </div>
+
+      <!-- Letter Content -->
+      <div class="text-gray-800 text-base md:text-lg leading-relaxed">
+        <p class="mb-4 fade-in-text" style="animation-delay: 0.2s;">My Dearest</p>
+        <p class="mb-4 fade-in-text" style="animation-delay: 0.4s;">Happy Monthsary, my sweetest love! Today, we celebrate another beautiful milestone in our journey together. Every moment with you feels like a page from a fairy tale, filled with warmth, laughter, and endless love.</p>
+        <p class="mb-4 fade-in-text" style="animation-delay: 0.6s;">You are my sunshine on the gloomiest days, my partner in every adventure, and the beat of my heart. The way you smile, the way you make me laugh, and the way you love me so fiercely—it’s more than I could ever dream of.</p>
+        <p class="mb-4 fade-in-text" style="animation-delay: 0.8s;">Like these tulips, our love blooms brighter with every passing day. Thank you for being you, for choosing me, and for making every second we share so magical. Here’s to countless more monthsaries, filled with love, cuddles, and all our little moments that mean the world.</p>
+        <p class="mb-4 fade-in-text italic" style="animation-delay: 1s;">"You are my today and all of my tomorrows." – Leo Christopher</p>
+        <p class="mb-4 fade-in-text" style="animation-delay: 1.2s;">I love you more than words can ever express, today and always.</p>
+        <p class="font-semibold text-pink-600 fade-in-text" style="animation-delay: 1.4s;">Yours Forever,</p>
+        <p class="font-semibold text-pink-600 fade-in-text signature" style="animation-delay: 1.6s;">Your Name</p>
+      </div>
+
+      <!-- Footer Tulip -->
+      <div class="flex justify-center mt-6">
+        <img src="https://cdn.florista.ph/uploads/product/floristaph/MAY2025/2367-1746428066910.webp" alt="Pink Rose" class="w-28 md:w-32 tulip" loading="lazy">
+      </div>
+
+      <!-- Sign to Trigger Slideshow -->
+      <div class="text-center mt-8">
+        <p class="text-pink-600 text-lg md:text-xl font-semibold fade-in-text" style="animation-delay: 1.8s;">Not done yet, my love! Click below for a sweet surprise! 😘 I love you!</p>
+        <button id="show-slideshow" class="sign-button bg-pink-500 text-white px-6 py-3 rounded-full hover:bg-pink-600 transition mt-4 text-lg" aria-label="Open romantic slideshow">
+          <span class="text-2xl">💌</span> Click Me!
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slideshow Container -->
+  <div class="slideshow-container" id="slideshow">
+    <input type="file" id="upload-images" accept="image/*" multiple style="display: none;">
+    <button onclick="document.getElementById('upload-images').click()" class="bg-pink-500 text-white px-4 py-2 rounded-full hover:bg-pink-600 transition text-sm md:text-base mt-4">Upload Your Photos</button>
+    <div class="slide" data-caption="Our first sunset together, where every color in the sky felt like a promise of forever.">
+      <img src="https://images.unsplash.com/photo-1519643381402-26cd00388888?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Romantic Scene 1" loading="lazy">
+    </div>
+    <div class="slide" data-caption="Those quiet moments when we just sit together, feeling like the world is ours.">
+      <img src="https://images.unsplash.com/photo-1519741497674-4113f4c149b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Romantic Scene 2" loading="lazy">
+    </div>
+    <div class="slide" data-caption="Every adventure with you is a memory I’ll cherish for a lifetime.">
+      <img src="https://images.unsplash.com/photo-1505842468372-cdc7f0f48d44?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Romantic Scene 3" loading="lazy">
+    </div>
+    <div class="caption" id="slide-caption"></div>
+    <div class="text-center mt-4 space-x-4">
+      <button id="prev-slide" class="bg-pink-500 text-white px-4 py-2 rounded-full hover:bg-pink-600 transition text-sm md:text-base">Previous</button>
+      <button id="next-slide" class="bg-pink-500 text-white px-4 py-2 rounded-full hover:bg-pink-600 transition text-sm md:text-base">Next</button>
+    </div>
+  </div>
+
+  <script>
+    // Letter open/close functionality
+    const letter = document.getElementById('letter');
+    const envelope = document.getElementById('envelope');
+    const letterContent = document.getElementById('letter-content');
+    const envelopeTitle = document.getElementById('envelope-title');
+    letter.addEventListener('click', () => {
+      if (letter.classList.contains('closed')) {
+        letter.classList.remove('closed');
+        letter.classList.add('open');
+        envelope.style.display = 'none';
+        envelopeTitle.style.opacity = '1';
+        letterContent.classList.remove('closed');
+        letterContent.classList.add('open');
+        typeWriterEffect();
+      }
+    });
+
+    // Keyboard navigation for letter
+    letter.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && letter.classList.contains('closed')) {
+        letter.classList.remove('closed');
+        letter.classList.add('open');
+        envelope.style.display = 'none';
+        envelopeTitle.style.opacity = '1';
+        letterContent.classList.remove('closed');
+        letterContent.classList.add('open');
+        typeWriterEffect();
+      }
+    });
+
+    // Add floating hearts and sparkles dynamically
+    const container = document.querySelector('.letter-container');
+    const colors = ['#ff6b6b', '#ff8e8e', '#ffb3b3', '#ffffff'];
+    for (let i = 0; i < 8; i++) {
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.style.top = `${Math.random() * 80 + 10}%`;
+      heart.style.left = `${Math.random() * 80 + 10}%`;
+      heart.style.animationDelay = `${Math.random() * 3}s`;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      heart.style.background = color;
+      heart.innerHTML = `<style>.heart::before,.heart::after{background:${color};}</style>`;
+      heart.addEventListener('click', () => {
+        heart.style.animation = 'pop 0.5s ease forwards';
+        setTimeout(() => heart.remove(), 500);
+      });
+      container.appendChild(heart);
+    }
+    for (let i = 0; i < 6; i++) {
+      const sparkle = document.createElement('div');
+      sparkle.className = 'sparkle';
+      sparkle.style.top = `${Math.random() * 80 + 10}%`;
+      sparkle.style.left = `${Math.random() * 80 + 10}%`;
+      sparkle.style.animationDelay = `${Math.random() * 2}s`;
+      container.appendChild(sparkle);
+    }
+
+    // Parallax background effect
+    window.addEventListener('mousemove', (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 20;
+      const y = (e.clientY / window.innerHeight - 0.5) * 20;
+      document.body.style.backgroundPosition = `${50 + x}% ${50 + y}%`;
+    });
+
+    // Slideshow functionality
+    const slideshow = document.getElementById('slideshow');
+    const showSlideshowButton = document.getElementById('show-slideshow');
+    let slides = document.querySelectorAll('.slide');
+    const caption = document.getElementById('slide-caption');
+    const prevButton = document.getElementById('prev-slide');
+    const nextButton = document.getElementById('next-slide');
+    let currentSlide = 0;
+
+    showSlideshowButton.addEventListener('click', () => {
+      letter.style.display = 'none';
+      slideshow.classList.add('active');
+      showSlide(currentSlide);
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#ff6b6b', '#ffb3b3', '#ffffff']
+      });
+    });
+
+    function showSlide(index) {
+      slides.forEach((slide, i) => {
+        slide.classList.remove('active');
+        if (i === index) {
+          slide.classList.add('active');
+          caption.textContent = slide.getAttribute('data-caption');
+        }
+      });
+    }
+
+    prevButton.addEventListener('click', () => {
+      currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+      showSlide(currentSlide);
+    });
+
+    nextButton.addEventListener('click', () => {
+      currentSlide = (currentSlide + 1) % slides.length;
+      showSlide(currentSlide);
+    });
+
+    // Auto-advance slideshow
+    setInterval(() => {
+      if (slideshow.classList.contains('active')) {
+        currentSlide = (currentSlide + 1) % slides.length;
+        showSlide(currentSlide);
+      }
+    }, 4000);
+
+    // Touch gestures for slideshow
+    const hammer = new Hammer(slideshow);
+    hammer.on('swipeleft', () => {
+      currentSlide = (currentSlide + 1) % slides.length;
+      showSlide(currentSlide);
+    });
+    hammer.on('swiperight', () => {
+      currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+      showSlide(currentSlide);
+    });
+
+    // Keyboard navigation for slideshow
+    document.addEventListener('keydown', (e) => {
+      if (slideshow.classList.contains('active')) {
+        if (e.key === 'ArrowLeft') {
+          currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+          showSlide(currentSlide);
+        } else if (e.key === 'ArrowRight') {
+          currentSlide = (currentSlide + 1) % slides.length;
+          showSlide(currentSlide);
+        }
+      }
+    });
+
+    // Customizable slideshow
+    document.getElementById('upload-images').addEventListener('change', (e) => {
+      const files = e.target.files;
+      slideshow.innerHTML = '';
+      Array.from(files).forEach((file, i) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const slide = document.createElement('div');
+          slide.className = 'slide';
+          slide.setAttribute('data-caption', `Our special moment #${i + 1}`);
+          slide.innerHTML = `<img src="${event.target.result}" alt="Uploaded Photo" loading="lazy">`;
+          slideshow.appendChild(slide);
+          slides = document.querySelectorAll('.slide');
+          if (i === 0) {
+            currentSlide = 0;
+            showSlide(0);
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+      slideshow.appendChild(document.getElementById('slide-caption'));
+      slideshow.appendChild(document.querySelector('.space-x-4'));
+    });
+
+    // Typewriter effect
+    function typeWriterEffect() {
+      const paragraphs = document.querySelectorAll('.letter-content p:not(.signature)');
+      paragraphs.forEach((p, index) => {
+        const text = p.textContent;
+        p.textContent = '';
+        let i = 0;
+        const type = () => {
+          if (i < text.length) {
+            p.textContent += text.charAt(i);
+            i++;
+            setTimeout(type, 50);
+          }
+        };
+        setTimeout(type, index * 1000);
+      });
+    }
+  </script>
+</body>
+</html>
