@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scan for Monthsary Letter</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.0/build/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-image: url('https://images.unsplash.com/photo-1586787353897-c7b9d9b9f4c9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
+      background-size: cover;
+      background-attachment: fixed;
+      background-position: center;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Dancing Script', cursive;
+      color: #333;
+      position: relative;
+      overflow: hidden;
+    }
+    .qr-container {
+      background: linear-gradient(135deg, rgba(255, 245, 247, 0.95), rgba(255, 255, 255, 0.95));
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      border: 4px solid #f9a8d4;
+      padding: 2rem;
+      max-width: 90%;
+      width: 400px;
+      text-align: center;
+      transition: transform 0.3s ease-in-out;
+      position: relative;
+      z-index: 1;
+    }
+    .qr-container:hover {
+      transform: scale(1.05);
+    }
+    #qr-code {
+      margin: 1.5rem auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #qr-code img,
+    #qr-code canvas {
+      max-width: 100%;
+      height: auto;
+    }
+    .tulip {
+      animation: sway 2.5s ease-in-out infinite;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    }
+    .heart {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background: #ff6b6b;
+      transform: rotate(-45deg);
+      animation: float 5s ease-in-out infinite;
+      z-index: 10;
+      cursor: pointer;
+    }
+    .heart::before,
+    .heart::after {
+      content: '';
+      width: 18px;
+      height: 18px;
+      background: #ff6b6b;
+      border-radius: 50%;
+      position: absolute;
+    }
+    .heart::before {
+      top: -9px;
+      left: 0;
+    }
+    .heart::after {
+      left: 9px;
+      top: 0;
+    }
+    @keyframes float {
+      0% { transform: translateY(0) rotate(-45deg) scale(1); opacity: 0.9; }
+      50% { transform: translateY(-120px) rotate(-45deg) scale(1.15); opacity: 0.4; }
+      100% { transform: translateY(0) rotate(-45deg) scale(1); opacity: 0.9; }
+    }
+    @keyframes pop {
+      0% { transform: scale(1) rotate(-45deg); opacity: 0.9; }
+      50% { transform: scale(2) rotate(-45deg); opacity: 0.5; }
+      100% { transform: scale(0) rotate(-45deg); opacity: 0; }
+    }
+    .background-element {
+      position: absolute;
+      animation: backgroundFlow 12s linear infinite;
+      z-index: 0;
+    }
+    .background-heart {
+      width: 20px;
+      height: 20px;
+      background: linear-gradient(45deg, rgba(255, 107, 107, 0.6), rgba(255, 179, 179, 0.6));
+      transform: rotate(-45deg);
+    }
+    .background-heart::before,
+    .background-heart::after {
+      content: '';
+      width: 20px;
+      height: 20px;
+      background: linear-gradient(45deg, rgba(255, 107, 107, 0.6), rgba(255, 179, 179, 0.6));
+      border-radius: 50%;
+      position: absolute;
+    }
+    .background-heart::before {
+      top: -10px;
+      left: 0;
+    }
+    .background-heart::after {
+      left: 10px;
+      top: 0;
+    }
+    .background-sparkle {
+      width: 10px;
+      height: 10px;
+      background: radial-gradient(circle, rgba(255, 209, 220, 0.8), rgba(255, 255, 255, 0.2));
+      border-radius: 50%;
+    }
+    @keyframes backgroundFlow {
+      0% { transform: translate(0, 100vh) scale(1); opacity: 0.7; }
+      20% { transform: translate(-50px, 70vh) scale(1.2); }
+      40% { transform: translate(50px, 40vh) scale(1.4); }
+      60% { transform: translate(-30px, 10vh) scale(1.1); }
+      100% { transform: translate(0, -100vh) scale(1.5); opacity: 0; }
+    }
+    @keyframes sway {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(8deg) scale(1.05); }
+      100% { transform: rotate(0deg) scale(1); }
+    }
+    @media (max-width: 640px) {
+      .qr-container {
+        padding: 1.5rem;
+        width: 95%;
+      }
+      h1 {
+        font-size: 2rem;
+      }
+      .tulip {
+        width: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="qr-container">
+    <h1 class="text-3xl md:text-4xl font-bold text-pink-600 mb-4">Scan the QR Code!</h1>
+    <p class="text-lg md:text-xl text-gray-800 mb-6">Unlock a special monthsary surprise by scanning the code below! 💕<br><small></small></p>
+    <div id="qr-code"></div>
+    <img src="https://media.tenor.com/JzBlFNZ2oy8AAAAM/lick-kiss.gif" alt="KISS" class="tulip w-20 md:w-24 mx-auto mt-4" loading="lazy">
+  </div>
+
+  <script>
+    // Function to generate QR code
+    function generateQRCode() {
+      const qrCodeDiv = document.getElementById('qr-code');
+      try {
+        new QRCode(qrCodeDiv, {
+          text: window.location.href.replace('qr.html', 'index.html'),
+          width: 200,
+          height: 200,
+          colorDark: '#ff6b6b',
+          colorLight: '#ffffff'
+        });
+      } catch (e) {
+        qrCodeDiv.innerHTML = '<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(window.location.href.replace('qr.html', 'index.html')) + '" alt="QR Code" style="max-width: 100%; height: auto;">';
+      }
+    }
+
+    // Confetti and background elements on load
+    window.onload = function() {
+      generateQRCode();
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#ff6b6b', '#ffb3b3', '#ffffff']
+      });
+
+      // Add interactive hearts
+      const container = document.querySelector('.qr-container');
+      for (let i = 0; i < 5; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'heart';
+        heart.style.top = `${Math.random() * 80 + 10}%`;
+        heart.style.left = `${Math.random() * 80 + 10}%`;
+        heart.style.animationDelay = `${Math.random() * 3}s`;
+        heart.addEventListener('click', () => {
+          heart.style.animation = 'pop 0.5s ease forwards';
+          setTimeout(() => heart.remove(), 500);
+        });
+        container.appendChild(heart);
+      }
+
+      // Add enhanced background elements (hearts and sparkles)
+      const body = document.body;
+      for (let i = 0; i < 15; i++) {
+        const element = document.createElement('div');
+        element.className = 'background-element ' + (Math.random() > 0.5 ? 'background-heart' : 'background-sparkle');
+        element.style.left = `${Math.random() * 100}%`;
+        element.style.animationDelay = `${Math.random() * 12}s`;
+        element.style.animationDuration = `${10 + Math.random() * 5}s`; // 10-15s duration
+        body.appendChild(element);
+      }
+
+      // Attempt automatic audio playback with max volume
+      const audio = new Audio('iris.mp3');
+      audio.volume = 1.0;
+      audio.loop = true;
+      audio.play().catch(error => {
+        console.log("Automatic playback blocked:", error);
+        document.body.addEventListener('click', () => {
+          if (audio.paused) {
+            audio.play().catch(err => console.log("Playback after interaction failed:", err));
+          }
+        }, { once: true });
+      });
+    };
+  </script>
+</body>
+</html>
