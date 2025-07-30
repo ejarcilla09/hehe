@@ -165,14 +165,14 @@
       const qrCodeDiv = document.getElementById('qr-code');
       try {
         new QRCode(qrCodeDiv, {
-          text: window.location.href.replace('qr.html', 'hehe.html'),
+          text: 'https://ejarcilla09.github.io/hehe/hehe.html',
           width: 200,
           height: 200,
           colorDark: '#ff6b6b',
           colorLight: '#ffffff'
         });
       } catch (e) {
-        qrCodeDiv.innerHTML = '<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(window.location.href.replace('qr.html', 'hehe.html')) + '" alt="QR Code" style="max-width: 100%; height: auto;">';
+        qrCodeDiv.innerHTML = '<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent('https://ejarcilla09.github.io/hehe/hehe.html') + '" alt="QR Code" style="max-width: 100%; height: auto;">';
       }
     }
 
