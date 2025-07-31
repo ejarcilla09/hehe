@@ -533,8 +533,8 @@
         if (i === index) {
           slide.classList.add('active');
           caption.textContent = slide.getAttribute('data-caption');
-          const particleCount = index === slides.length - 1 ? 200 : 50 + index * 10;
-          const shapes = index === slides.length - 1 ? ['heart', 'star', 'circle'] : ['heart', 'circle'];
+          const particleCount = 50 + index * 10;
+          const shapes = ['heart', 'circle'];
           confetti({
             particleCount: particleCount,
             spread: 70,
@@ -542,22 +542,10 @@
             colors: ['#ff6b6b', '#ffb3b3', '#ffffff', '#ffe4e6', '#f9a8d4'],
             shapes: shapes
           });
-          if (index === slides.length - 1) {
-            setTimeout(() => {
-              finalOverlay.classList.add('active');
-              confetti({
-                particleCount: 300,
-                spread: 90,
-                origin: { y: 0.6 },
-                shapes: ['heart'],
-                colors: ['#ff6b6b', '#ffffff', '#f9a8d4']
-              });
-            }, 1000);
-          } else {
-            finalOverlay.classList.remove('active');
-          }
         }
       });
+      // Ensure final overlay is hidden unless explicitly triggered
+      finalOverlay.classList.remove('active');
     }
 
     prevButton.addEventListener('click', () => {
@@ -566,12 +554,25 @@
     });
 
     nextButton.addEventListener('click', () => {
-      currentSlide = (currentSlide + 1) % slides.length;
-      showSlide(currentSlide);
+      if (currentSlide === slides.length - 1) {
+        // On the last slide, show the final overlay instead of cycling
+        finalOverlay.classList.add('active');
+        confetti({
+          particleCount: 300,
+          spread: 90,
+          origin: { y: 0.6 },
+          shapes: ['heart'],
+          colors: ['#ff6b6b', '#ffffff', '#f9a8d4']
+        });
+      } else {
+        currentSlide = (currentSlide + 1) % slides.length;
+        showSlide(currentSlide);
+      }
     });
 
+    // Auto-advance slideshow, but stop before the last slide
     setInterval(() => {
-      if (slideshow.classList.contains('active') && !finalOverlay.classList.contains('active')) {
+      if (slideshow.classList.contains('active') && !finalOverlay.classList.contains('active') && currentSlide < slides.length - 1) {
         currentSlide = (currentSlide + 1) % slides.length;
         showSlide(currentSlide);
       }
@@ -579,8 +580,19 @@
 
     const hammer = new Hammer(slideshow);
     hammer.on('swipeleft', () => {
-      currentSlide = (currentSlide + 1) % slides.length;
-      showSlide(currentSlide);
+      if (currentSlide === slides.length - 1) {
+        finalOverlay.classList.add('active');
+        confetti({
+          particleCount: 300,
+          spread: 90,
+          origin: { y: 0.6 },
+          shapes: ['heart'],
+          colors: ['#ff6b6b', '#ffffff', '#f9a8d4']
+        });
+      } else {
+        currentSlide = (currentSlide + 1) % slides.length;
+        showSlide(currentSlide);
+      }
     });
     hammer.on('swiperight', () => {
       currentSlide = (currentSlide - 1 + slides.length) % slides.length;
@@ -593,8 +605,19 @@
           currentSlide = (currentSlide - 1 + slides.length) % slides.length;
           showSlide(currentSlide);
         } else if (e.key === 'ArrowRight') {
-          currentSlide = (currentSlide + 1) % slides.length;
-          showSlide(currentSlide);
+          if (currentSlide === slides.length - 1) {
+            finalOverlay.classList.add('active');
+            confetti({
+              particleCount: 300,
+              spread: 90,
+              origin: { y: 0.6 },
+              shapes: ['heart'],
+              colors: ['#ff6b6b', '#ffffff', '#f9a8d4']
+            });
+          } else {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+          }
         }
       }
     });
