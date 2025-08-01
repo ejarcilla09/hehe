@@ -19,6 +19,7 @@
       justify-content: center;
       font-family: 'Lora', serif;
       cursor: url('https://img.icons8.com/emoji/16/000000/heart-suit.png'), auto;
+      touch-action: manipulation; /* Improves touch responsiveness */
     }
     @keyframes gradientShift {
       0% { background-position: 0% 50%; }
@@ -163,6 +164,7 @@
       opacity: 0;
       transform: translateX(100px);
       transition: all 0.8s ease-in-out;
+      touch-action: pinch-zoom; /* Enables pinch-to-zoom on mobile */
     }
     .slideshow-container.active {
       display: block;
@@ -191,6 +193,7 @@
       border: 3px solid #f9a8d4;
       padding: 10px;
       background: #fff;
+      user-select: none; /* Prevents image dragging on mobile */
     }
     .slide.active {
       display: block;
@@ -200,7 +203,7 @@
       0% { opacity: 0; transform: scale(0.98) rotate(-2deg); }
       100% { opacity: 1; transform: scale(1) rotate(-2deg); }
     }
-    .sign-button, .nav-button, .caption {
+    .sign-button, .nav-button, .caption, .back-button {
       animation: bounce 1.8s ease-in-out infinite;
       box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
       animation: glow 1.5s ease-in-out infinite alternate;
@@ -265,6 +268,8 @@
       border: 4px solid #f9a8d4;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
       position: relative;
+      max-width: 90%;
+      width: 500px;
     }
     .final-message::before {
       content: '♥';
@@ -275,6 +280,37 @@
       transform: translateX(-50%);
       color: #ff6b6b;
       animation: pulse 1.8s ease-in-out infinite;
+    }
+    .heart-loop {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: #ff6b6b;
+      transform: rotate(-45deg);
+      animation: heartLoop 3s ease-in-out infinite;
+      opacity: 0.8;
+    }
+    .heart-loop::before,
+    .heart-loop::after {
+      content: '';
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #ff6b6b;
+      position: absolute;
+    }
+    .heart-loop::before {
+      top: -10px;
+      left: 0;
+    }
+    .heart-loop::after {
+      left: 10px;
+      top: 0;
+    }
+    @keyframes heartLoop {
+      0% { transform: translateY(0) rotate(-45deg) scale(1); opacity: 0.8; }
+      50% { transform: translateY(-30px) rotate(-45deg) scale(1.2); opacity: 0.4; }
+      100% { transform: translateY(0) rotate(-45deg) scale(1); opacity: 0.8; }
     }
     h1 {
       font-family: 'Great Vibes', cursive;
@@ -305,6 +341,15 @@
       }
       .caption {
         font-size: 1rem;
+        padding: 10px;
+      }
+      .sign-button, .nav-button, .back-button {
+        padding: 12px 20px; /* Larger touch targets */
+        font-size: 1.1rem;
+      }
+      .final-message {
+        width: 90%;
+        padding: 1.5rem;
       }
     }
   </style>
@@ -397,7 +442,7 @@
     <div class="slide" data-caption="Eto naman yung ano, magra-ragsak dapat tayo kaso sobrang daming tao kaya nalipat tayo ron sa harap nila, which is masarap naman, wala tayong pic don kaya etong Pizza nalang kasi nag-aano talaga me sa Pizza nung nandon pa tayo sa coffee shop, haba ng nilakad natin non, pero hindi ko ramdam yung pagod kasi kasama kita, and mas gusto ko pa nga 'yon para mas matagal kitang makasama, pero I know ramdam mo palagi yung pagod, sorry for that, baby.">
       <img src="7.jpg" alt="Romantic Scene 7" loading="lazy">
     </div>
-    <div class="slide" data-caption="Hmmm HAHAHAHAH dito naganap yung maraming first natin together eh, kaya ikaw na bahala mag-isip sa pic na'to, basta kahit may mga nakakakabang part, masaya ako sa lahat ng nangyari that day, sa mga nagdaang araw, and mga magdadaang araw pa.">
+    <div class="slide" data-caption="Hmmm HAHAHAHAH dito mo ako sinagot HAHAHHAHA very epic pa yung pangyayari kasi hindi pumasok sa isip ko, nagulat nalang ako HAHAHAHA dito rin naganap yung maraming first natin together eh, kaya ikaw na bahala mag-isip sa pic na'to, basta kahit may mga nakakakabang part, masaya ako sa lahat ng nangyari that day, sa mga nagdaang araw, and mga magdadaang araw pa.">
       <img src="8.jpg" alt="Romantic Scene 8" loading="lazy">
     </div>
     <div class="slide" data-caption="Our first monthsary! Grabe ang sarap ng foods dito sa lksyon, babalikan natin to, not now pero someday. Dito ko pinatikim yung tawilis sa'yo, sobrang dami nating order to the point na hindi na natin naubos HAHAHAHA akala natin kaya natin, hindi pala, ang bigat ng foods nila. After niyan hinatid kita tapos wala lang, hindi ko maano na, eto ba yung sa ck ko lang nakilala? HAHAHAHA grabe, never me naniwala, never me sumubok, talagang trip lang, iba talaga kapag tadhana na yung nagpasya.">
@@ -428,8 +473,17 @@
   <!-- Final Overlay -->
   <div class="final-overlay" id="final-overlay">
     <div class="final-message">
-      <h2 class="text-3xl font-bold text-pink-600 mb-4">Here’s to us, forever.</h2>
-      <p class="text-gray-800 text-lg">Every moment with you is my favorite story.</p>
+      <!-- Looping Hearts -->
+      <div class="heart-loop" style="top: 10%; left: 10%; animation-delay: 0s;"></div>
+      <div class="heart-loop" style="top: 20%; right: 15%; animation-delay: 0.5s;"></div>
+      <div class="heart-loop" style="bottom: 15%; left: 15%; animation-delay: 1s;"></div>
+      <div class="heart-loop" style="bottom: 25%; right: 10%; animation-delay: 1.5s;"></div>
+      <h2 class="text-3xl font-bold text-pink-600 mb-4 fade-in-text" style="animation-delay: 0.2s;">Here’s to us, forever.</h2>
+      <p class="text-gray-800 text-lg mb-4 fade-in-text" style="animation-delay: 0.4s;">Every moment with you is my favorite story.</p>
+      <p class="text-pink-600 text-lg italic fade-in-text" style="animation-delay: 0.6s;">"In you, I've found the love of my life and my closest, truest friend."</p>
+      <button id="back-to-letter" class="back-button bg-pink-500 text-white px-6 py-3 rounded-full hover:bg-pink-600 transition mt-4 text-lg" aria-label="Return to letter">
+        <span class="text-2xl">💕</span> Back to Letter
+      </button>
     </div>
   </div>
 
@@ -509,6 +563,7 @@
     const prevButton = document.getElementById('prev-slide');
     const nextButton = document.getElementById('next-slide');
     const finalOverlay = document.getElementById('final-overlay');
+    const backToLetterButton = document.getElementById('back-to-letter');
     let currentSlide = 0;
 
     showSlideshowButton.addEventListener('click', () => {
@@ -544,7 +599,6 @@
           });
         }
       });
-      // Ensure final overlay is hidden unless explicitly triggered
       finalOverlay.classList.remove('active');
     }
 
@@ -555,7 +609,6 @@
 
     nextButton.addEventListener('click', () => {
       if (currentSlide === slides.length - 1) {
-        // On the last slide, show the final overlay instead of cycling
         finalOverlay.classList.add('active');
         confetti({
           particleCount: 300,
@@ -568,6 +621,22 @@
         currentSlide = (currentSlide + 1) % slides.length;
         showSlide(currentSlide);
       }
+    });
+
+    // Back to Letter functionality
+    backToLetterButton.addEventListener('click', () => {
+      finalOverlay.classList.remove('active');
+      slideshow.classList.remove('active');
+      letter.style.display = 'block';
+      letter.classList.remove('fade-out');
+      currentSlide = 0; // Reset slideshow
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#ff6b6b', '#ffb3b3', '#ffffff', '#ffe4e6', '#f9a8d4'],
+        shapes: ['heart', 'circle']
+      });
     });
 
     // Auto-advance slideshow, but stop before the last slide
@@ -638,6 +707,13 @@
         setTimeout(type, index * 1000);
       });
     }
+
+    // Prevent pinch-to-zoom on non-image elements
+    document.addEventListener('touchstart', (e) => {
+      if (e.target.tagName !== 'IMG') {
+        e.preventDefault();
+      }
+    }, { passive: false });
   </script>
 </body>
 </html>
