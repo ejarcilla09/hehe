@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="https://hammerjs.github.io/dist/hammer.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Great_Vibes&family=Lora:wght@400;700&family=Dancing_Script:wght@400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Lora:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
       background: linear-gradient(90deg, #ffe4e6, #e9d5ff);
@@ -19,7 +19,6 @@
       justify-content: center;
       font-family: 'Lora', serif;
       cursor: url('https://img.icons8.com/emoji/16/000000/heart-suit.png'), auto;
-      touch-action: manipulation;
     }
     @keyframes gradientShift {
       0% { background-position: 0% 50%; }
@@ -164,7 +163,6 @@
       opacity: 0;
       transform: translateX(100px);
       transition: all 0.8s ease-in-out;
-      touch-action: pinch-zoom;
     }
     .slideshow-container.active {
       display: block;
@@ -174,48 +172,25 @@
     .slide {
       display: none;
       width: 100%;
-      background: #fff;
+      object-fit: contain;
       border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      background: #fff;
+      padding: 20px;
       transform: rotate(-2deg);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      cursor: pointer;
+      transition: transform 0.3s ease;
     }
     .slide:hover {
       transform: rotate(0deg) translateY(-10px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     }
-    .slide.zoomed {
-      transform: scale(1.2) rotate(0deg);
-      z-index: 20;
-      position: relative;
-    }
-    .polaroid {
-      background: #fff;
-      padding: 15px 15px 60px 15px;
-      border: 1px solid #d1d1d1;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      position: relative;
-      margin: 10px;
-    }
-    .polaroid img {
+    .slide img {
       width: 100%;
       max-height: 600px;
       object-fit: contain;
       border-radius: 8px;
       border: 3px solid #f9a8d4;
-      user-select: none;
-    }
-    .polaroid-caption {
-      position: absolute;
-      bottom: 15px;
-      left: 0;
-      right: 0;
-      text-align: center;
-      font-family: 'Dancing Script', cursive;
-      font-size: 1.2rem;
-      color: #4a3f4b;
-      padding: 5px;
+      padding: 10px;
+      background: #fff;
     }
     .slide.active {
       display: block;
@@ -225,7 +200,7 @@
       0% { opacity: 0; transform: scale(0.98) rotate(-2deg); }
       100% { opacity: 1; transform: scale(1) rotate(-2deg); }
     }
-    .sign-button, .nav-button, .back-button {
+    .sign-button, .nav-button, .caption {
       animation: bounce 1.8s ease-in-out infinite;
       box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
       animation: glow 1.5s ease-in-out infinite alternate;
@@ -248,7 +223,6 @@
       font-size: 1.2rem;
       font-weight: 500;
       line-height: 1.6;
-      min-height: 3em;
     }
     .caption:hover {
       background: #db2777;
@@ -291,8 +265,6 @@
       border: 4px solid #f9a8d4;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
       position: relative;
-      max-width: 90%;
-      width: 500px;
     }
     .final-message::before {
       content: '♥';
@@ -303,37 +275,6 @@
       transform: translateX(-50%);
       color: #ff6b6b;
       animation: pulse 1.8s ease-in-out infinite;
-    }
-    .heart-loop {
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      background: #ff6b6b;
-      transform: rotate(-45deg);
-      animation: heartLoop 3s ease-in-out infinite;
-      opacity: 0.8;
-    }
-    .heart-loop::before,
-    .heart-loop::after {
-      content: '';
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: #ff6b6b;
-      position: absolute;
-    }
-    .heart-loop::before {
-      top: -10px;
-      left: 0;
-    }
-    .heart-loop::after {
-      left: 10px;
-      top: 0;
-    }
-    @keyframes heartLoop {
-      0% { transform: translateY(0) rotate(-45deg) scale(1); opacity: 0.8; }
-      50% { transform: translateY(-30px) rotate(-45deg) scale(1.2); opacity: 0.4; }
-      100% { transform: translateY(0) rotate(-45deg) scale(1); opacity: 0.8; }
     }
     h1 {
       font-family: 'Great Vibes', cursive;
@@ -364,21 +305,6 @@
       }
       .caption {
         font-size: 1rem;
-        padding: 10px;
-      }
-      .sign-button, .nav-button, .back-button {
-        padding: 12px 20px;
-        font-size: 1.1rem;
-      }
-      .final-message {
-        width: 90%;
-        padding: 1.5rem;
-      }
-      .polaroid {
-        padding: 10px 10px 40px 10px;
-      }
-      .polaroid-caption {
-        font-size: 1rem;
       }
     }
   </style>
@@ -388,28 +314,40 @@
     <source src="iris.mp3" type="audio/mp3">
   </audio>
   <div class="letter-container closed" id="letter" role="button" aria-label="Click to open the monthsary letter">
+    <!-- Floating Hearts -->
     <div class="heart" style="top: 5%; left: 5%; animation-delay: 0s;"></div>
     <div class="heart" style="top: 15%; right: 10%; animation-delay: 1s;"></div>
     <div class="heart" style="bottom: 10%; left: 10%; animation-delay: 2s;"></div>
     <div class="heart" style="bottom: 20%; right: 15%; animation-delay: 3s;"></div>
     <div class="heart" style="top: 25%; left: 20%; animation-delay: 0.5s;"></div>
     <div class="heart" style="bottom: 15%; right: 25%; animation-delay: 1.5s;"></div>
+
+    <!-- Sparkle Effects -->
     <div class="sparkle" style="top: 10%; left: 20%; animation-delay: 0.5s;"></div>
     <div class="sparkle" style="top: 30%; right: 15%; animation-delay: 1.5s;"></div>
     <div class="sparkle" style="bottom: 25%; left: 25%; animation-delay: 2.5s;"></div>
     <div class="sparkle" style="top: 20%; right: 20%; animation-delay: 1s;"></div>
     <div class="sparkle" style="bottom: 30%; left: 15%; animation-delay: 2s;"></div>
+
+    <!-- Envelope (Closed State) -->
     <div class="envelope text-center" id="envelope">
       <img src="https://img.icons8.com/color/100/000000/love-letter.png" alt="Envelope" class="mx-auto mb-4 w-32 h-48" loading="lazy">
       <p class="text-pink-600 text-lg font-semibold">Click to open our special monthsary letter! 💕</p>
     </div>
+
+    <!-- Letter Content (Initially Hidden) -->
     <div class="letter-content closed" id="letter-content">
+      <!-- Header -->
       <h1 class="text-4xl md:text-5xl font-bold text-pink-600 text-center mb-6 pulse-and-glow fade-in-text" id="envelope-title" style="opacity: 0;">Happy Monthsary!</h1>
+
+      <!-- Tulip Images -->
       <div class="flex justify-between mb-6">
         <img src="https://onlineflowerexpress.com/cdn/shop/files/PinkTulipsLove.webp?v=1691571050" alt="Pink Tulip" class="w-24 md:w-28 tulip" style="animation-delay: 0s;" loading="lazy">
         <img src="https://onlineflowerexpress.com/cdn/shop/files/PinkTulipsLove.webp?v=1691571050" alt="Pink Tulip" class="w-24 md:w-28 tulip" style="animation-delay: 1s;" loading="lazy">
         <img src="https://onlineflowerexpress.com/cdn/shop/files/PinkTulipsLove.webp?v=1691571050" alt="Pink Tulip" class="w-24 md:w-28 tulip" style="animation-delay: 2s;" loading="lazy">
       </div>
+
+      <!-- Letter Content -->
       <div class="text-gray-800 text-base md:text-lg leading-relaxed">
         <p class="mb-4 fade-in-text" style="animation-delay: 0.2s;">Hello Baby,</p>
         <p class="mb-4 fade-in-text" style="animation-delay: 0.4s;">Another month together, and I’m still amazed at how you make every day feel like a gift. From our late-night talks to the way we laugh over the smallest things, you’ve turned my world into something brighter, something real.</p>
@@ -420,9 +358,13 @@
         <p class="font-semibold text-pink-600 fade-in-text" style="animation-delay: 1.4s;">Always yours,</p>
         <p class="font-semibold text-pink-600 fade-in-text signature" style="animation-delay: 1.6s;">Baby mo</p>
       </div>
+
+      <!-- Footer Tulip -->
       <div class="flex justify-center mt-6">
         <img src="https://cdn.florista.ph/uploads/product/floristaph/MAY2025/2367-1746428066910.webp" alt="Pink Rose" class="w-28 md:w-32 tulip" loading="lazy">
       </div>
+
+      <!-- Sign to Trigger Slideshow -->
       <div class="text-center mt-8">
         <p class="text-pink-600 text-lg md:text-xl font-semibold fade-in-text" style="animation-delay: 1.8s;">Got a little something extra for you. Click below for a surprise! I love you!</p>
         <button id="show-slideshow" class="sign-button bg-pink-500 text-white px-6 py-3 rounded-full hover:bg-pink-600 transition mt-4 text-lg" aria-label="Open romantic slideshow">
@@ -431,90 +373,50 @@
       </div>
     </div>
   </div>
+
+  <!-- Slideshow Container -->
   <div class="slideshow-container" id="slideshow">
     <div class="slide" data-caption="Our first date. Hindi man bongga pero sobrang memorable nito, rito naganap first kiss natin, first bbq together HAHAHAHA first magkatabi together, dun ko rin nalaman na ayaw mo ng harapan kumain, first coffee together and iba pang first natin together na nagagawa ko naman mag-isa or kasama ang iba pero hindi ko alam na mas masaya pala kapag kasama ka.">
-      <div class="polaroid">
-        <img src="1.jpg" alt="Romantic Scene 1" loading="lazy">
-        <div class="polaroid-caption">Our First Date</div>
-      </div>
+      <img src="1.jpg" alt="Romantic Scene 1" loading="lazy">
     </div>
     <div class="slide" data-caption="Eto yung Anthem Cafe, first time kong makaubos ng 1 liter na fruit tea HAHAHAHA I'm not a fan of fruit tea talaga pero idk, lahat pala magugustuhan mo kapag kasama mahal mo. Bebe ang saya ko habang tina-type ko to, what more pa kaya kapag sinusulat ko, kaso hindi talaga maintindihan sulat eh, kaya dinaan ko here HAHAHA sorry baby, maybe next time hehe!">
-      <div class="polaroid">
-        <img src="2.jpg" alt="Romantic Scene 2" loading="lazy">
-        <div class="polaroid-caption">Anthem Cafe</div>
-      </div>
+      <img src="2.jpg" alt="Romantic Scene 2" loading="lazy">
     </div>
     <div class="slide" data-caption="Eto yung nag Zus tayo pero hindi talaga yan yung pinaka memorable sa date natin na yan, ayan lang kasi yung pic na meron ako, that time kasi hindi pa tayo mahilig mag pic together. Ayang moment na yan, before niyan nag simba tayo, that's our first mass together, mas masaya pala magsimba kapag nandon sa tabi mo yung dinadalangin mo HAHAHAHAA masyado na akong cheesy, naco-cornyhan kana siguro.">
-      <div class="polaroid">
-        <img src="3.jpg" alt="Romantic Scene 3" loading="lazy">
-        <div class="polaroid-caption">First Mass Together</div>
-      </div>
+      <img src="3.jpg" alt="Romantic Scene 3" loading="lazy">
     </div>
     <div class="slide" data-caption="Eto yung ano, yung amoy araw ka HAHAHAHAHHA pero ang sarap mo parin amuyin, mahal lang siguro kita kaya natitiis ko amoy mo HAHHAHAHA eme lang baby, baka nag-ooverthink ka nanaman hah.">
-      <div class="polaroid">
-        <img src="4.jpg" alt="Romantic Scene 4" loading="lazy">
-        <div class="polaroid-caption">Amoy Araw na Baby</div>
-      </div>
+      <img src="4.jpg" alt="Romantic Scene 4" loading="lazy">
     </div>
     <div class="slide" data-caption="Eto yung celebration natin sa birthday mo, hindi ko to makakalimutan, ikaw sumagot nito eh, hiyang-hiya me that time, sinakto mo na short me kaya hindi me makapagsabing ako na, hindi me sanay na nililibre eh, mas gusto ko yung ako yung nagbibigay sa'yo, kaya 'wag kana magalit, feeling ko habang binabasa mo yung kanina nakatingin ka sa'kin tas nakasimangot HAHAHAHA ito rin pala yung first cinema date natin, cute ng mga sigaw mo, yung holding hands natin habang nanonood and yung mga kwento mo after, lahat cute HAHAHAHA i love youuu!">
-      <div class="polaroid">
-        <img src="5.jpg" alt="Romantic Scene 5" loading="lazy">
-        <div class="polaroid-caption">Your Birthday</div>
-      </div>
+      <img src="5.jpg" alt="Romantic Scene 5" loading="lazy">
     </div>
     <div class="slide" data-caption="Eto hindi ko rin to makakalimutan. I mean, lahat naman hindi ko makakalimutan eh, pero eto kasi yung nag-crave ka sa Ramen tapos pinili ko spicy HAHHAHAHA akala ko kaya ko, kasi nakakaya ko naman yung ibang ganon, pero wala, mahina bossing mo HAHHAHAHA tas wala lang, ang cute lang ng mga pics natin dito, eto yung first natin na maraming pics together eh.">
-      <div class="polaroid">
-        <img src="6.jpg" alt="Romantic Scene 6" loading="lazy">
-        <div class="polaroid-caption">Ramen Adventure</div>
-      </div>
+      <img src="6.jpg" alt="Romantic Scene 6" loading="lazy">
     </div>
     <div class="slide" data-caption="Eto naman yung ano, magra-ragsak dapat tayo kaso sobrang daming tao kaya nalipat tayo ron sa harap nila, which is masarap naman, wala tayong pic don kaya etong Pizza nalang kasi nag-aano talaga me sa Pizza nung nandon pa tayo sa coffee shop, haba ng nilakad natin non, pero hindi ko ramdam yung pagod kasi kasama kita, and mas gusto ko pa nga 'yon para mas matagal kitang makasama, pero I know ramdam mo palagi yung pagod, sorry for that, baby.">
-      <div class="polaroid">
-        <img src="7.jpg" alt="Romantic Scene 7" loading="lazy">
-        <div class="polaroid-caption">Sponty Date</div>
-      </div>
+      <img src="7.jpg" alt="Romantic Scene 7" loading="lazy">
     </div>
     <div class="slide" data-caption="Hmmm HAHAHAHAH dito mo ako sinagot HAHAHHAHA very epic pa yung pangyayari kasi hindi pumasok sa isip ko, nagulat nalang ako HAHAHAHA dito rin naganap yung maraming first natin together eh, kaya ikaw na bahala mag-isip sa pic na'to, basta kahit may mga nakakakabang part, masaya ako sa lahat ng nangyari that day, sa mga nagdaang araw, and mga magdadaang araw pa.">
-      <div class="polaroid">
-        <img src="8.jpg" alt="Romantic Scene 8" loading="lazy">
-        <div class="polaroid-caption">The Day You Said Yes</div>
-      </div>
+      <img src="8.jpg" alt="Romantic Scene 8" loading="lazy">
     </div>
     <div class="slide" data-caption="Our first monthsary! Grabe ang sarap ng foods dito sa lksyon, babalikan natin to, not now pero someday. Dito ko pinatikim yung tawilis sa'yo, sobrang dami nating order to the point na hindi na natin naubos HAHAHAHA akala natin kaya natin, hindi pala, ang bigat ng foods nila. After niyan hinatid kita tapos wala lang, hindi ko maano na, eto ba yung sa ck ko lang nakilala? HAHAHAHA grabe, never me naniwala, never me sumubok, talagang trip lang, iba talaga kapag tadhana na yung nagpasya.">
-      <div class="polaroid">
-        <img src="9.jpg" alt="Romantic Scene 9" loading="lazy">
-        <div class="polaroid-caption">First Monthsary</div>
-      </div>
+      <img src="9.jpg" alt="Romantic Scene 9" loading="lazy">
     </div>
     <div class="slide" data-caption="Eto yung nag tapsi tayo tapos nag lugaw after kasi gusto mo ng lugaw, grabe cravings mo niyan no bebe, lugaw sa gabi HAHHAHAH buti meron pa tapos ang sarap pa ng lugaw nila, ang sarap din ng tapsi, kagaya nga ng sinabi mo 'babalikan'.">
-      <div class="polaroid">
-        <img src="10.jpg" alt="Romantic Scene 10" loading="lazy">
-        <div class="polaroid-caption">Tapsi & Lugaw Night</div>
-      </div>
+      <img src="10.jpg" alt="Romantic Scene 10" loading="lazy">
     </div>
     <div class="slide" data-caption="Eto yung mga biglaang punta ko eh, I mean, biglaan din naman yung before nitong pic pero eto kasi magkaaway tayo nito eh, or hindi? Basta eto yung kwentuhan lang and all, matic kapag nasa Park, safe place nating dalawa. Kumbaga kapag walang-wala na tayo sa sarili natin, dito tayo nagpupunta, usap and all, sa Park nadin tayo nagbabati, I'm lucky to have a woman that is not picky sa place, foods and all. Mahal kita, Achim!">
-      <div class="polaroid">
-        <img src="11.jpg" alt="Romantic Scene 11" loading="lazy">
-        <div class="polaroid-caption">Our Safe Place</div>
-      </div>
+      <img src="11.jpg" alt="Romantic Scene 11" loading="lazy">
     </div>
     <div class="slide" data-caption="Eto yung ano, yung ano HAHHAHAHAHAH wala parehas inheat HAHAHAHAHAHA ikaw na bahala rito boss ko.">
-      <div class="polaroid">
-        <img src="12.jpg" alt="Romantic Scene 12" loading="lazy">
-        <div class="polaroid-caption">That HEHE Moment</div>
-      </div>
+      <img src="12.jpg" alt="Romantic Scene 12" loading="lazy">
     </div>
     <div class="slide" data-caption="Dito, very biglaan lang din, sinubukan natin yung bonchon tapos nag coffee tayo after, yung mga very biglaan alam mo na yon HAHAHAHA basta kahit anong nangyari that day, positive man or negative, masaya ako palagi sa'yo.">
-      <div class="polaroid">
-        <img src="13.jpg" alt="Romantic Scene 13" loading="lazy">
-        <div class="polaroid-caption">Sponty lang din</div>
-      </div>
+      <img src="13.jpg" alt="Romantic Scene 13" loading="lazy">
     </div>
     <div class="slide" data-caption="Medyo mabigat tong pic na'to, first time natin mag-away ng sobrang lala to the point na umabot na sa pag clear mo ng nn and all, pagsabi ko ng ayoko na, hindi natin pag-uusap kahit magkasama tayo, parehas mabigat sa'tin yung nagyari, and I swear na I'll do better, sorry nadala rin ako sa bigat ng naramdaman ko that time, kaya siguro kung ano-ano na pumasok sa isip ko, just know na mahal na mahal kita palagi, kahit ganon na yung mga nasabi ko, hinding-hindi ko gagawin yon, gusto ko lang naman na lambingin mo ako non, kaso hinayaan mo me, which is understandable naman sa mga nasabi mo sa'kin nung kalmado na tayo, anyways, reset tayo hah, kaya dapat habang binabasa mo to nakangiti ka parin, masaya ka parin kasi magkasama tayo now, nagpapahinga, parehas tumatakas sa problema, parehas din lumalaban syempre, I got you, you got me, marami pa akong gustong sabihin pero tapusin ko nalang muna sa isang, i love youuu!">
-      <div class="polaroid">
-        <img src="14.jpg" alt="Romantic Scene 14" loading="lazy">
-        <div class="polaroid-caption">Our Reset Moment</div>
-      </div>
+      <img src="14.jpg" alt="Romantic Scene 14" loading="lazy">
     </div>
     <div class="caption" id="slide-caption"></div>
     <div class="text-center mt-4 space-x-4">
@@ -522,53 +424,16 @@
       <button id="next-slide" class="nav-button bg-pink-500 text-white px-4 py-2 rounded-full hover:bg-pink-600 transition text-sm md:text-base">Next</button>
     </div>
   </div>
+
+  <!-- Final Overlay -->
   <div class="final-overlay" id="final-overlay">
     <div class="final-message">
-      <div class="heart-loop" style="top: 10%; left: 10%; animation-delay: 0s;"></div>
-      <div class="heart-loop" style="top: 20%; right: 15%; animation-delay: 0.5s;"></div>
-      <div class="heart-loop" style="bottom: 15%; left: 15%; animation-delay: 1s;"></div>
-      <div class="heart-loop" style="bottom: 25%; right: 10%; animation-delay: 1.5s;"></div>
-      <h2 class="text-3xl font-bold text-pink-600 mb-4 fade-in-text" style="animation-delay: 0.2s;">Here’s to us, forever.</h2>
-      <p class="text-gray-800 text-lg mb-4 fade-in-text" style="animation-delay: 0.4s;">Every moment with you is my favorite story.</p>
-      <p class="text-pink-600 text-lg italic fade-in-text" style="animation-delay: 0.6s;">"In you, I've found the love of my life and my closest, truest friend."</p>
-      <button id="back-to-letter" class="back-button bg-pink-500 text-white px-6 py-3 rounded-full hover:bg-pink-600 transition mt-4 text-lg" aria-label="Return to letter">
-        <span class="text-2xl">💕</span> Back to Letter
-      </button>
+      <h2 class="text-3xl font-bold text-pink-600 mb-4">Here’s to us, forever.</h2>
+      <p class="text-gray-800 text-lg">Every moment with you is my favorite story.</p>
     </div>
   </div>
-  <script>
-    // Fireworks effect using canvas-confetti
-    function launchFireworks() {
-      const duration = 3 * 1000;
-      const animationEnd = Date.now() + duration;
-      const defaults = {
-        startVelocity: 30,
-        spread: 360,
-        ticks: 60,
-        zIndex: 100,
-        colors: ['#ff6b6b', '#ffb3b3', '#ffffff', '#ffe4e6', '#f9a8d4']
-      };
-      const interval = setInterval(() => {
-        const timeLeft = animationEnd - Date.now();
-        if (timeLeft <= 0) {
-          return clearInterval(interval);
-        }
-        const particleCount = 50 * (timeLeft / duration);
-        confetti({
-          ...defaults,
-          particleCount,
-          origin: { x: Math.random() * 0.4 + 0.3, y: Math.random() * 0.4 + 0.1 },
-          shapes: ['circle', 'star']
-        });
-        confetti({
-          ...defaults,
-          particleCount,
-          origin: { x: Math.random() * 0.4 + 0.6, y: Math.random() * 0.4 + 0.1 },
-          shapes: ['circle', 'star']
-        });
-      }, 250);
-    }
 
+  <script>
     // Letter open/close functionality
     const letter = document.getElementById('letter');
     const envelope = document.getElementById('envelope');
@@ -587,6 +452,8 @@
         typeWriterEffect();
       }
     });
+
+    // Keyboard navigation for letter
     letter.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && letter.classList.contains('closed')) {
         letter.classList.remove('closed');
@@ -599,6 +466,8 @@
         typeWriterEffect();
       }
     });
+
+    // Add floating hearts and sparkles dynamically
     const container = document.querySelector('.letter-container');
     const colors = ['#ff6b6b', '#ff8e8e', '#ffb3b3', '#ffffff', '#ffe4e6'];
     for (let i = 0; i < 8; i++) {
@@ -624,11 +493,15 @@
       sparkle.style.animationDelay = `${Math.random() * 2}s`;
       container.appendChild(sparkle);
     }
+
+    // Parallax background effect
     window.addEventListener('mousemove', (e) => {
       const x = (e.clientX / window.innerWidth - 0.5) * 20;
       const y = (e.clientY / window.innerHeight - 0.5) * 20;
       document.body.style.backgroundPosition = `${50 + x}% ${50 + y}%`;
     });
+
+    // Slideshow functionality
     const slideshow = document.getElementById('slideshow');
     const showSlideshowButton = document.getElementById('show-slideshow');
     let slides = document.querySelectorAll('.slide');
@@ -636,8 +509,8 @@
     const prevButton = document.getElementById('prev-slide');
     const nextButton = document.getElementById('next-slide');
     const finalOverlay = document.getElementById('final-overlay');
-    const backToLetterButton = document.getElementById('back-to-letter');
     let currentSlide = 0;
+
     showSlideshowButton.addEventListener('click', () => {
       letter.classList.add('fade-out');
       setTimeout(() => {
@@ -653,75 +526,69 @@
         });
       }, 800);
     });
-    function typeCaption(text) {
-      caption.textContent = '';
-      let i = 0;
-      const type = () => {
-        if (i < text.length) {
-          caption.textContent += text.charAt(i);
-          i++;
-          setTimeout(type, 30);
-        }
-      };
-      type();
-    }
+
     function showSlide(index) {
       slides.forEach((slide, i) => {
-        slide.classList.remove('active', 'zoomed');
+        slide.classList.remove('active');
         if (i === index) {
           slide.classList.add('active');
-          const captionText = slide.getAttribute('data-caption');
-          typeCaption(captionText);
+          caption.textContent = slide.getAttribute('data-caption');
+          const particleCount = 50 + index * 10;
+          const shapes = ['heart', 'circle'];
           confetti({
-            particleCount: 50 + index * 10,
+            particleCount: particleCount,
             spread: 70,
             origin: { y: 0.6 },
             colors: ['#ff6b6b', '#ffb3b3', '#ffffff', '#ffe4e6', '#f9a8d4'],
-            shapes: ['heart', 'circle']
+            shapes: shapes
           });
         }
       });
+      // Ensure final overlay is hidden unless explicitly triggered
       finalOverlay.classList.remove('active');
     }
-    slides.forEach(slide => {
-      slide.addEventListener('click', () => {
-        if (slide.classList.contains('active')) {
-          slide.classList.toggle('zoomed');
-        }
-      });
-    });
+
     prevButton.addEventListener('click', () => {
       currentSlide = (currentSlide - 1 + slides.length) % slides.length;
       showSlide(currentSlide);
     });
+
     nextButton.addEventListener('click', () => {
       if (currentSlide === slides.length - 1) {
+        // On the last slide, show the final overlay instead of cycling
         finalOverlay.classList.add('active');
-        launchFireworks();
+        confetti({
+          particleCount: 300,
+          spread: 90,
+          origin: { y: 0.6 },
+          shapes: ['heart'],
+          colors: ['#ff6b6b', '#ffffff', '#f9a8d4']
+        });
       } else {
         currentSlide = (currentSlide + 1) % slides.length;
         showSlide(currentSlide);
       }
     });
-    backToLetterButton.addEventListener('click', () => {
-      finalOverlay.classList.remove('active');
-      slideshow.classList.remove('active');
-      letter.style.display = 'block';
-      letter.classList.remove('fade-out');
-      currentSlide = 0;
-      launchFireworks();
-    });
+
+    // Auto-advance slideshow, but stop before the last slide
     setInterval(() => {
       if (slideshow.classList.contains('active') && !finalOverlay.classList.contains('active') && currentSlide < slides.length - 1) {
         currentSlide = (currentSlide + 1) % slides.length;
         showSlide(currentSlide);
       }
     }, 100000);
+
     const hammer = new Hammer(slideshow);
     hammer.on('swipeleft', () => {
       if (currentSlide === slides.length - 1) {
         finalOverlay.classList.add('active');
-        launchFireworks();
+        confetti({
+          particleCount: 300,
+          spread: 90,
+          origin: { y: 0.6 },
+          shapes: ['heart'],
+          colors: ['#ff6b6b', '#ffffff', '#f9a8d4']
+        });
       } else {
         currentSlide = (currentSlide + 1) % slides.length;
         showSlide(currentSlide);
@@ -731,6 +598,7 @@
       currentSlide = (currentSlide - 1 + slides.length) % slides.length;
       showSlide(currentSlide);
     });
+
     document.addEventListener('keydown', (e) => {
       if (slideshow.classList.contains('active') && !finalOverlay.classList.contains('active')) {
         if (e.key === 'ArrowLeft') {
@@ -739,7 +607,13 @@
         } else if (e.key === 'ArrowRight') {
           if (currentSlide === slides.length - 1) {
             finalOverlay.classList.add('active');
-            launchFireworks();
+            confetti({
+              particleCount: 300,
+              spread: 90,
+              origin: { y: 0.6 },
+              shapes: ['heart'],
+              colors: ['#ff6b6b', '#ffffff', '#f9a8d4']
+            });
           } else {
             currentSlide = (currentSlide + 1) % slides.length;
             showSlide(currentSlide);
@@ -747,6 +621,7 @@
         }
       }
     });
+
     function typeWriterEffect() {
       const paragraphs = document.querySelectorAll('.letter-content p:not(.signature)');
       paragraphs.forEach((p, index) => {
@@ -763,11 +638,6 @@
         setTimeout(type, index * 1000);
       });
     }
-    document.addEventListener('touchstart', (e) => {
-      if (e.target.tagName !== 'IMG') {
-        e.preventDefault();
-      }
-    }, { passive: false });
   </script>
 </body>
 </html>
